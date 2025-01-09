@@ -1,4 +1,4 @@
-// log more to console AI!
+// could this code be improved? AI?
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import {
   getFirestore,
