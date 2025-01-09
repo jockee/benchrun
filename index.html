@@ -3,69 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Run & Bench Calculator</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f5f5f5;
+    <title>Run &amp; Bench Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              pop: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '70%': { transform: 'scale(1.05)' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              }
+            },
+            animation: {
+              pop: 'pop 0.3s ease-out'
+            }
+          }
+        }
       }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
-      input {
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        width: 100px;
-      }
-      button {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      #result {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .final-score {
-        background-color: #4caf50;
-        color: white;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        font-size: 1.5em;
-        margin-top: 15px;
-        animation: pop 0.3s ease-out;
-      }
-      @keyframes pop {
-        0% { transform: scale(0.8); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-    </style>
+    </script>
   </head>
-  <body>
-    <h1>Run & Bench Calculator</h1>
+  <body class="bg-gray-100 text-gray-800 max-w-3xl mx-auto p-8 mt-10 font-sans">
+    <h1 class="text-4xl text-blue-700 text-center mb-10 font-bold">Run &amp; Bench Calculator</h1>
 
-    <div class="form-group">
-      <label>10K Run Time:</label>
-      <input type="number" id="minutes" value="40" min="0" step="1" onkeydown="return event.keyCode !== 190" oninput="this.value=Math.floor(this.value)" />
+    <div class="bg-white p-6 rounded-xl shadow-md mb-5">
+      <label class="block text-lg font-semibold text-gray-700 mb-3">10K Run Time:</label>
+      <input 
+        type="number" 
+        id="minutes" 
+        value="40" 
+        min="0" 
+        step="1" 
+        placeholder="Minutes"
+        class="w-32 p-3 border-2 border-gray-200 rounded-lg mr-3 focus:border-blue-500 focus:outline-none transition-colors text-lg"
+        onkeydown="return event.keyCode !== 190" 
+        oninput="this.value=Math.floor(this.value)" 
+      />
       <input
         type="number"
         id="seconds"
@@ -73,19 +47,35 @@
         min="0"
         max="59"
         step="1"
+        placeholder="Seconds"
+        class="w-32 p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg"
         onkeydown="return event.keyCode !== 190"
         oninput="this.value=Math.floor(this.value)"
       />
     </div>
 
-    <div class="form-group">
-      <label>Bench Press Max (kg):</label>
-      <input type="number" id="benchPress" value="100" min="0" step="1" onkeydown="return event.keyCode !== 190" oninput="this.value=Math.floor(this.value)" />
+    <div class="bg-white p-6 rounded-xl shadow-md mb-5">
+      <label class="block text-lg font-semibold text-gray-700 mb-3">Bench Press Max (kg):</label>
+      <input 
+        type="number" 
+        id="benchPress" 
+        value="100" 
+        min="0" 
+        step="1" 
+        class="w-32 p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg"
+        onkeydown="return event.keyCode !== 190" 
+        oninput="this.value=Math.floor(this.value)" 
+      />
     </div>
 
-    <button onclick="calculate()">Calculate</button>
+    <button 
+      onclick="calculate()" 
+      class="block mx-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold text-lg shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/40 active:translate-y-0 transition-all"
+    >
+      Calculate
+    </button>
 
-    <div id="result"></div>
+    <div id="result" class="mt-8"></div>
 
     <script>
       function calculate() {
@@ -110,14 +100,16 @@
         // Display result
         const resultDiv = document.getElementById("result");
         resultDiv.innerHTML = `
-                <h3>Results:</h3>
-                <p>10K Time: ${minutes}:${seconds.toString().padStart(2, "0")} (${totalTimeInMinutes.toFixed(2)} minutes)</p>
-                <p>Bench Press: ${benchPress} kg</p>
-                <div class="final-score">
-                    <strong>Score:</strong><br>
-                    ${result.toFixed(2)}
-                </div>
-            `;
+          <div class="bg-white p-6 rounded-xl shadow-md">
+            <h3 class="text-2xl text-blue-700 font-bold mb-4">Results:</h3>
+            <p class="text-lg mb-2">10K Time: ${minutes}:${seconds.toString().padStart(2, "0")} (${totalTimeInMinutes.toFixed(2)} minutes)</p>
+            <p class="text-lg mb-4">Bench Press: ${benchPress} kg</p>
+            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-5 rounded-xl text-center text-2xl shadow-lg shadow-green-500/30 animate-pop">
+              <strong>Score:</strong><br>
+              ${result.toFixed(2)}
+            </div>
+          </div>
+        `;
       }
     </script>
   </body>
