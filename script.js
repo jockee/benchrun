@@ -1,4 +1,3 @@
-// could this code be improved? AI?
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import {
   getFirestore,
@@ -12,52 +11,86 @@ import {
   serverTimestamp,
   deleteDoc,
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCq8hCEihBoaiGkfeCLbEvLTgJSc2Ax4kU",
-  authDomain: "benchrun-ef548.firebaseapp.com",
-  projectId: "benchrun-ef548",
-  storageBucket: "benchrun-ef548.firebasestorage.app",
-  messagingSenderId: "1017917216219",
-  appId: "1:1017917216219:web:7323069c81180c3f2383fe",
-};
+import { firebaseConfig } from './config.js';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Save score function
 window.saveScore = async function (score) {
-  const today = new Date().toISOString().split("T")[0];
-  await addDoc(collection(db, "highScores"), {
-    score: score,
-    date: today,
-    timestamp: serverTimestamp(),
-  });
-  loadHighScores();
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    
+    // Show loading state
+    document.getElementById("result").classList.add("opacity-50");
+    
+    // Validate score
+    if (typeof score !== 'number' || isNaN(score)) {
+      throw new Error("Invalid score value");
+    }
+    
+    await addDoc(collection(db, "highScores"), {
+      score: score,
+      date: today,
+      timestamp: serverTimestamp(),
+    });
+    
+    await loadHighScores();
+    
+  } catch (error) {
+    console.error("Error saving score:", error);
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML += `
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"> Failed to save score. Please try again.</span>
+      </div>
+    `;
+  } finally {
+    document.getElementById("result").classList.remove("opacity-50");
+  }
 };
 
 window.loadHighScores = async function () {
-  const today = new Date().toISOString().split("T")[0];
   const highScoresDiv = document.getElementById("highScores");
+  highScoresDiv.classList.add("opacity-50");
+  
+  try {
+    const today = new Date().toISOString().split("T")[0];
 
-  const q = query(
-    collection(db, "highScores"),
-    where("date", "==", today),
-    orderBy("score", "desc"),
-    limit(5),
-  );
-  const querySnapshot = await getDocs(q);
+    const q = query(
+      collection(db, "highScores"),
+      where("date", "==", today),
+      orderBy("score", "desc"),
+      limit(5),
+    );
+    const querySnapshot = await getDocs(q);
 
-  let scoresHtml =
-    '<h3 class="text-2xl text-blue-700 font-bold mb-4">Today\'s Top Scores:</h3><ul>';
+    let scoresHtml =
+      '<h3 class="text-2xl text-blue-700 font-bold mb-4">Today\'s Top Scores:</h3>';
+    
+    if (querySnapshot.empty) {
+      scoresHtml += '<p class="text-gray-600">No scores recorded today yet.</p>';
+    } else {
+      scoresHtml += '<ul>';
+      querySnapshot.forEach((doc) => {
+        scoresHtml += `<li class="text-lg mb-2">${doc.data().score.toFixed(2)}</li>`;
+      });
+      scoresHtml += "</ul>";
+    }
 
-  querySnapshot.forEach((doc) => {
-    scoresHtml += `<li class="text-lg mb-2">${doc.data().score.toFixed(2)}</li>`;
-  });
-
-  scoresHtml += "</ul>";
-  highScoresDiv.innerHTML = scoresHtml;
+    highScoresDiv.innerHTML = scoresHtml;
+  } catch (error) {
+    console.error("Error loading scores:", error);
+    highScoresDiv.innerHTML = `
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"> Failed to load scores. Please refresh the page.</span>
+      </div>
+    `;
+  } finally {
+    highScoresDiv.classList.remove("opacity-50");
+  }
 };
 
 // Delete all scores from the database (not just today's scores)
