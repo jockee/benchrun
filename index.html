@@ -47,7 +47,7 @@
         id="seconds"
         value="0"
         min="0"
-        max="60"
+        max="59"
         step="1"
         placeholder="Seconds"
         class="w-32 p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg"
@@ -95,7 +95,7 @@
         
         // Ensure the value is within bounds
         let value = parseInt(input.value) || 0;
-        if (value > 60) input.value = 60;
+        if (value > 59) input.value = 59;
         if (value < 0) input.value = 0;
       }
 
