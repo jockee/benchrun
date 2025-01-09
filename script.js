@@ -1,3 +1,4 @@
+// log more to console AI!
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import {
   getFirestore,
@@ -9,6 +10,7 @@ import {
   limit,
   getDocs,
   serverTimestamp,
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // Initialize Firebase
@@ -56,6 +58,19 @@ window.loadHighScores = async function () {
 
   scoresHtml += "</ul>";
   highScoresDiv.innerHTML = scoresHtml;
+};
+
+// Delete all scores from the database (not just today's scores)
+window.deleteAllScores = async function () {
+  const q = query(collection(db, "highScores"));
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach(async (doc) => {
+    await deleteDoc(doc.ref);
+  });
+
+  // Refresh the display
+  loadHighScores();
 };
 
 // Load high scores when page loads
