@@ -33,24 +33,26 @@
         type="number" 
         id="minutes" 
         value="40" 
-        min="0" 
+        min="26" 
+        max="100"
         step="1" 
         placeholder="Minutes"
         class="w-32 p-3 border-2 border-gray-200 rounded-lg mr-3 focus:border-blue-500 focus:outline-none transition-colors text-lg"
         onkeydown="return event.keyCode !== 190" 
-        oninput="this.value=Math.floor(this.value)" 
+        oninput="validateMinutes(this)"
+        onblur="if(this.value !== '' && parseInt(this.value) < 26) this.value = 26"
       />
       <input
         type="number"
         id="seconds"
         value="0"
         min="0"
-        max="59"
+        max="60"
         step="1"
         placeholder="Seconds"
         class="w-32 p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg"
         onkeydown="return event.keyCode !== 190"
-        oninput="this.value=Math.floor(this.value)"
+        oninput="validateSeconds(this)"
       />
     </div>
 
@@ -78,6 +80,25 @@
     <div id="result" class="mt-8"></div>
 
     <script>
+      function validateMinutes(input) {
+        // Remove any decimal points and non-numeric characters
+        input.value = input.value.replace(/[^\d]/g, '');
+        
+        // Only enforce maximum limit during typing
+        let value = parseInt(input.value) || 0;
+        if (value > 100) input.value = 100;
+      }
+
+      function validateSeconds(input) {
+        // Remove any decimal points and non-numeric characters
+        input.value = input.value.replace(/[^\d]/g, '');
+        
+        // Ensure the value is within bounds
+        let value = parseInt(input.value) || 0;
+        if (value > 60) input.value = 60;
+        if (value < 0) input.value = 0;
+      }
+
       function calculate() {
         // Get input values and ensure they're integers
         const minutes = Math.floor(parseInt(document.getElementById("minutes").value)) || 0;
@@ -85,7 +106,7 @@
         const benchPress = Math.floor(parseInt(document.getElementById("benchPress").value)) || 0;
 
         // Validate inputs
-        if ((minutes === 0 && seconds === 0) || benchPress === 0) {
+        if (minutes < 26 || minutes > 100 || seconds < 0 || seconds > 60 || benchPress === 0) {
           alert("Please enter valid values for both run time and bench press");
           return;
         }
