@@ -103,9 +103,9 @@
         // Convert time to minutes
         const totalTimeInMinutes = minutes + seconds / 60;
 
-        // Calculate using the formula: bench + (9/(runningtime^3))*690000
+
         const result =
-          benchPress + (9 / Math.pow(totalTimeInMinutes, 3)) * 690000;
+          benchPress + (6210000 / Math.pow(totalTimeInMinutes, 3));
 
         // Display result
         const resultDiv = document.getElementById("result");
