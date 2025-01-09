@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Run & Bench Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .final-score {
+        background-color: #4caf50;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 1.5em;
+        margin-top: 15px;
+        animation: pop 0.3s ease-out;
+      }
+      @keyframes pop {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Run & Bench Calculator</h1>
+
+    <div class="form-group">
+      <label>10K Run Time:</label>
+      <input type="number" id="minutes" value="40" min="0" step="1" onkeydown="return event.keyCode !== 190" oninput="this.value=Math.floor(this.value)" />
+      <input
+        type="number"
+        id="seconds"
+        value="0"
+        min="0"
+        max="59"
+        step="1"
+        onkeydown="return event.keyCode !== 190"
+        oninput="this.value=Math.floor(this.value)"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Bench Press Max (kg):</label>
+      <input type="number" id="benchPress" value="100" min="0" step="1" onkeydown="return event.keyCode !== 190" oninput="this.value=Math.floor(this.value)" />
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="result"></div>
+
+    <script>
+      function calculate() {
+        // Get input values and ensure they're integers
+        const minutes = Math.floor(parseInt(document.getElementById("minutes").value)) || 0;
+        const seconds = Math.floor(parseInt(document.getElementById("seconds").value)) || 0;
+        const benchPress = Math.floor(parseInt(document.getElementById("benchPress").value)) || 0;
+
+        // Validate inputs
+        if ((minutes === 0 && seconds === 0) || benchPress === 0) {
+          alert("Please enter valid values for both run time and bench press");
+          return;
+        }
+
+        // Convert time to minutes
+        const totalTimeInMinutes = minutes + seconds / 60;
+
+        // Calculate using the formula: bench + (9/(runningtime^3))*690000
+        const result =
+          benchPress + (9 / Math.pow(totalTimeInMinutes, 3)) * 690000;
+
+        // Display result
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = `
+                <h3>Results:</h3>
+                <p>10K Time: ${minutes}:${seconds.toString().padStart(2, "0")} (${totalTimeInMinutes.toFixed(2)} minutes)</p>
+                <p>Bench Press: ${benchPress} kg</p>
+                <div class="final-score">
+                    <strong>Score:</strong><br>
+                    ${result.toFixed(2)}
+                </div>
+            `;
+      }
+    </script>
+  </body>
+</html>
